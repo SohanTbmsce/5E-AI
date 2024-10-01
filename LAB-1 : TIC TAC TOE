@@ -1,0 +1,94 @@
+BOARD_EMPTY = 0
+BOARD_PLAYER_X = 1
+BOARD_PLAYER_O = -1
+
+
+def player(s):
+    x_places = s.count(BOARD_PLAYER_X)
+    o_places = s.count(BOARD_PLAYER_O)
+    if x_places > o_places:
+        return BOARD_PLAYER_O  
+    else:
+        return BOARD_PLAYER_X  
+
+
+def actions(s):
+    return [i for i in range(len(s)) if s[i] == BOARD_EMPTY]
+
+def result(s, index, play):
+    s_copy = s.copy()
+    s_copy[index] = play
+    return s_copy
+
+
+def terminal(s):
+    for i in range(3):
+        
+        if s[3 * i] == s[3 * i + 1] == s[3 * i + 2] != BOARD_EMPTY:
+            return s[3 * i]
+     
+        if s[i] == s[i + 3] == s[i + 6] != BOARD_EMPTY:
+            return s[i]
+ 
+    if s[0] == s[4] == s[8] != BOARD_EMPTY:
+        return s[0]
+    if s[2] == s[4] == s[6] != BOARD_EMPTY:
+        return s[2]
+ 
+    if BOARD_EMPTY not in s:
+        return 0  
+    return None  
+
+
+def print_board(s):
+    def convert(num):
+        if num == BOARD_PLAYER_X:
+            return 'X'
+        if num == BOARD_PLAYER_O:
+            return 'O'
+        return '_'
+    
+    for i in range(3):
+        print(f'{convert(s[3 * i])} {convert(s[3 * i + 1])} {convert(s[3 * i + 2])}')
+    print()
+
+
+if __name__ == '__main__':
+
+    s = [BOARD_EMPTY for _ in range(9)]
+    
+    print('|------- WELCOME TO TIC TAC TOE -----------|')
+    print('Player X (X) vs Player O (O)')
+    
+
+    while terminal(s) is None:
+      
+        play = player(s)
+        
+        if play == BOARD_PLAYER_X:
+            print('\n\nPlayer X\'s turn (You are X)', end='\n\n')
+        else:
+            print('\n\nPlayer O\'s turn (You are O)', end='\n\n')
+        
+       
+        x = int(input('Enter the row (0-2): '))
+        y = int(input('Enter the column (0-2): '))
+        index = 3 * x + y
+        
+       
+        if s[index] != BOARD_EMPTY:
+            print('That position is already taken. Try again.')
+            continue
+        
+      
+        s = result(s, index, play)
+        print_board(s)
+    
+  
+    winner = terminal(s)
+    if winner == BOARD_PLAYER_X:
+        print("Player X has won!")
+    elif winner == BOARD_PLAYER_O:
+        print("Player O has won!")
+    else:
+        print("It's a tie!")
